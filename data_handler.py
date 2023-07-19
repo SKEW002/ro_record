@@ -3,16 +3,17 @@ import pandas as pd
 
 class DataHandler:
 	def __init__(self):
-		sa = gspread.service_account(filename="rorecord-a80647abebdc.json")
-		sh = sa.open("RORecord")
-		self.wks = sh.worksheet("RO Data")
-		self.dataframe = pd.DataFrame(self.wks.get_all_records())
+		self.__sa = gspread.service_account(filename="rorecord-a80647abebdc.json")
+		self.__sh = self.__sa.open("RORecord")
+		self.ro_data = self.__sh.worksheet("RO Data")
+		self.dataframe = pd.DataFrame(self.ro_data.get_all_records())
 
 	def update_online(self):
+		self.history = self.__sh.worksheet("History")
 		# self.wks.update('A3', 'Anthony')
 		# self.wks.update('D2:E3', [['Engineering', 'Tennis'], ['Business', 'Pottery']])
 		# self.wks.update('F2', '=UPPER(E2)', raw=False)
-		self.wks.update([self.dataframe.columns.values.tolist()] + self.dataframe.values.tolist())
+		self.history.update([self.dataframe.columns.values.tolist()] + self.dataframe.values.tolist())
 
 	def test_print(self):
 		# print('Rows: ', wks.row_count)

@@ -6,8 +6,8 @@ import datetime
 class UI:
 	def __init__(self):
 		self.root = tk.Tk()
-		self.window_size = (800, 900) #x,y
-		self.root.geometry("800x900")
+		self.window_size = {"x":800, "y":900}
+		self.root.geometry("{}x{}".format(self.window_size["x"], self.window_size["y"]))
 		self.root.title("RO Competency and Proficiency Tracking System")
 		self.root.resizable(False, False)
 
@@ -29,21 +29,30 @@ class UI:
 			"Remark":tk.StringVar()
 		}
 
-		self.x = 0
-		self.y = 50
+		self.x = 0  # initial position
+		self.y = 50 # initial position
 
-		ttk.Label(self.root, text=self.raw_data["Date"], font=("Times New Roman", 17)).place(x = 400,y = 0)
+		ttk.Label(self.root, text=self.raw_data["Date"], font=("Times New Roman", 17)).place(x = self.window_size["x"] // 2, y = 0)
 
 
 	def update_data(self):
-		try:		
+		try:
 			updated_data = {}
 			for key, value in self.raw_data.items():
 				if key == "Date":
 					updated_data[key] = value
 
 				elif key == "Duration": # save in mins
-					updated_data[key] = self.raw_data["End Time"].get() // 100 * 60 - self.raw_data["Start Time"].get() // 100 * 60 + self.raw_data["End Time"].get() % 100 - self.raw_data["Start Time"].get() % 100
+					end_time_hrs = self.raw_data["End Time"].get() // 100
+					start_time_hrs = self.raw_data["Start Time"].get() // 100
+					end_time_mins = self.raw_data["End Time"].get() % 100
+					start_time_mins = self.raw_data["Start Time"].get() % 100
+
+					if (end_time_hrs > 23 or start_time_hrs > 23) or (end_time_mins > 59 or start_time_mins > 59):
+						raise ValueError
+					
+					else:
+						updated_data[key] = end_time_hrs * 60 - start_time_hrs * 60 + end_time_mins % 100 - start_time_mins % 100
 				
 				else:
 					updated_data[key] = value.get()
@@ -51,8 +60,19 @@ class UI:
 
 			return updated_data
 
-		except:
+		except (tk.TclError, ValueError):
+			self.alert_input_err()
 			return
+
+
+	def alert_input_err(self):
+		pop_up = tk.Tk()
+		pop_up.wm_title("Warning")
+		label = ttk.Label(pop_up, text="Please key in the time in correct format", font=("Times New Roman", 13))
+		label.pack(side="top", fill="x", pady=10)
+		button = ttk.Button(pop_up, text="close", command = pop_up.destroy)
+		button.pack()
+		pop_up.mainloop()
 
 
 	def drop_down(self, data_list, data_title, x=0, y=0):

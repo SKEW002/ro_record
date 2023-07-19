@@ -23,4 +23,4 @@ if __name__ == "__main__":
         interface.root.mainloop()
 
     except KeyboardInterrupt:
-        interface.update_data()
+        pass
