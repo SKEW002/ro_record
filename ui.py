@@ -11,11 +11,11 @@ class UI:
 		self.root.title("RO Competency and Proficiency Tracking System")
 		self.root.resizable(False, False)
 
+		self.updated_data = {}
 		self.raw_data = {
 			"RO Name":tk.StringVar(),
 			"Category":tk.StringVar(),
 			"Mentor": tk.StringVar(),
-			"Accident":tk.StringVar(),
 			"Date": datetime.datetime.now().strftime("%d/%m/%Y"),
 			"Start Time":tk.IntVar(),
 			"End Time": tk.IntVar(),
@@ -26,6 +26,7 @@ class UI:
 			"Traffic Light Override":tk.BooleanVar(),
 			"Move by Distance":tk.BooleanVar(),
 			"Set Destination":tk.BooleanVar(),
+			"Accident":tk.StringVar(),
 			"Remark":tk.StringVar()
 		}
 
@@ -37,10 +38,9 @@ class UI:
 
 	def update_data(self):
 		try:
-			updated_data = {}
 			for key, value in self.raw_data.items():
 				if key == "Date":
-					updated_data[key] = value
+					self.updated_data[key] = value
 
 				elif key == "Duration": # save in mins
 					end_time_hrs = self.raw_data["End Time"].get() // 100
@@ -52,13 +52,11 @@ class UI:
 						raise ValueError
 					
 					else:
-						updated_data[key] = end_time_hrs * 60 - start_time_hrs * 60 + end_time_mins % 100 - start_time_mins % 100
+						self.updated_data[key] = end_time_hrs * 60 - start_time_hrs * 60 + end_time_mins % 100 - start_time_mins % 100
 				
 				else:
-					updated_data[key] = value.get()
-			print(updated_data)
-
-			return updated_data
+					self.updated_data[key] = value.get()
+			self.alert_exit_program()
 
 		except (tk.TclError, ValueError):
 			self.alert_input_err()
@@ -73,6 +71,19 @@ class UI:
 		button = ttk.Button(pop_up, text="close", command = pop_up.destroy)
 		button.pack()
 		pop_up.mainloop()
+
+	def alert_exit_program(self):
+		self.exit_pop_up = tk.Tk()
+		self.exit_pop_up.wm_title("Exiting")
+		label = ttk.Label(self.exit_pop_up, text="Submitted successfully", font=("Times New Roman", 13))
+		label.pack(side="top", fill="x", pady=10)
+		button = ttk.Button(self.exit_pop_up, text="Ok", command = self.destroy_all_windows)
+		button.pack()
+		self.exit_pop_up.mainloop()
+	
+	def destroy_all_windows(self):
+		self.exit_pop_up.destroy()
+		self.root.destroy()
 
 
 	def drop_down(self, data_list, data_title, x=0, y=0):
@@ -110,3 +121,4 @@ class UI:
 
 	def submit_button(self):
 		button = tk.Button( self.root , text = "Submit" , command = self.update_data ).place(y=self.y)
+		self.root.mainloop()

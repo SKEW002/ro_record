@@ -6,14 +6,29 @@ class DataHandler:
 		self.__sa = gspread.service_account(filename="rorecord-a80647abebdc.json")
 		self.__sh = self.__sa.open("RORecord")
 		self.ro_data = self.__sh.worksheet("RO Data")
-		self.dataframe = pd.DataFrame(self.ro_data.get_all_records())
+		self.ro_dataframe = pd.DataFrame(self.ro_data.get_all_records())
 
-	def update_online(self):
-		self.history = self.__sh.worksheet("History")
-		# self.wks.update('A3', 'Anthony')
-		# self.wks.update('D2:E3', [['Engineering', 'Tennis'], ['Business', 'Pottery']])
-		# self.wks.update('F2', '=UPPER(E2)', raw=False)
-		self.history.update([self.dataframe.columns.values.tolist()] + self.dataframe.values.tolist())
+	def update_online(self, updated_data):
+		updated_data_list = []
+		history = self.__sh.worksheet("History")
+		for _, value in updated_data.items():
+			updated_data_list.append(value)
+
+		#update_ro_dataframe = pd.DataFrame.from_dict(updated_data)
+
+		#history.update( [update_ro_dataframe.columns.values.tolist()] + update_ro_dataframe.values.tolist())
+		history.append_row(updated_data_list)
+
+	def update_online_test(self,updated_data): # updated data in dict
+		updated_data_list = []
+		history = self.__sh.worksheet("Test")
+		for _, value in updated_data.items():
+			updated_data_list.append(value)
+
+		#update_ro_dataframe = pd.DataFrame.from_dict(updated_data)
+
+		#history.update( [update_ro_dataframe.columns.values.tolist()] + update_ro_dataframe.values.tolist())
+		history.append_row(updated_data_list)
 
 	def test_print(self):
 		# print('Rows: ', wks.row_count)
@@ -30,7 +45,3 @@ class DataHandler:
 		print(self.dataframe['RO Name'].tolist())
 
 		# print(wks.get_all_values())
-
-		# wks.update('A3', 'Anthony')
-		# wks.update('D2:E3', [['Engineering', 'Tennis'], ['Business', 'Pottery']])
-		# wks.update('F2', '=UPPER(E2)', raw=False)
