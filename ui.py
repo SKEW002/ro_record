@@ -69,6 +69,11 @@ class UI:
 
 				elif key == "Accident":
 					self.updated_data[key] = int(1 if value.get() == "Yes" else 0)
+				
+				elif key == "Encountered Bug":
+					self.updated_data[key] = value.get()
+					if len(self.updated_data[key]) != 0:
+						self.updated_data[key] += " | "
 
 				else:
 					self.updated_data[key] = value.get()
