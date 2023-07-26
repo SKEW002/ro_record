@@ -16,15 +16,15 @@ class DataHandler:
 
 
 	def update_online(self,updated_data): # updated data in dict
-		# title = datetime.datetime.now().strftime("%m%y"+"_History")
-		# try:
-		# 	history_data = self.__sh.worksheet("{}_History".format(datetime.datetime.now().strftime("%m%y"+"_History")))
-		# except gspread.exceptions.WorksheetNotFound:
-		# 	self.create_worksheet()
-		# 	history_data = self.__sh.worksheet("{}_History".format(datetime.datetime.now().strftime("%m%y"+"_History")))
+		title = datetime.datetime.now().strftime("%m%y"+"_History")
+		try:
+			history_data = self.__sh.worksheet(title)
+		except gspread.exceptions.WorksheetNotFound:
+			self.create_worksheet(title)
+			history_data = self.__sh.worksheet(title)
 
-		title = "Test History"
-		history_data = self.__sh.worksheet(title)
+		# title = "Test History"
+		# history_data = self.__sh.worksheet(title)
 		history_dataframe = pd.DataFrame(history_data.get_all_records())
 		updated_dataframe = pd.DataFrame.from_dict(updated_data)
 
@@ -35,20 +35,19 @@ class DataHandler:
 		compiled_dataframe = pd.DataFrame(compiled_data.get_all_records())
 		compiled_dataframe_columns = list(compiled_dataframe.columns)
 		if compiled_dataframe.empty:
-			#updated_dataframe = updated_dataframe.filter(items=["RO Name","Duration","Move Slowly","Path Selection", "Re-Localization","Traffic Light Override", "Move by Distance", "Set Destination","Accident","Encountered Bug"])
-			updated_dataframe = updated_dataframe.filter(items=compiled_dataframe_columns)
-			compiled_dataframe = pd.concat([compiled_dataframe, updated_dataframe])
+			compiled_dataframe_columns = compiled_data.row_values(1)
+			compiled_dataframe = updated_dataframe.filter(items=compiled_dataframe_columns)
+			#compiled_dataframe = pd.concat([compiled_dataframe, updated_dataframe])
 
 		else:
 			if updated_data["RO Name"] in compiled_dataframe["RO Name"].unique():
 				index = compiled_dataframe.loc[compiled_dataframe["RO Name"] == updated_data["RO Name"]].index[0]
-				for column_name in list(compiled_dataframe_columns):
+				for column_name in compiled_dataframe_columns:
 					if column_name == "RO Name":
 						continue
 					compiled_dataframe.at[index, column_name] += updated_data[column_name]
 
 			else:
-				#updated_dataframe = updated_dataframe.filter(items=["RO Name","Duration","Move Slowly","Path Selection", "Re-Localization","Traffic Light Override", "Move by Distance", "Set Destination"])
 				updated_dataframe = updated_dataframe.filter(items=compiled_dataframe_columns)
 				compiled_dataframe = pd.concat([compiled_dataframe, updated_dataframe])
 
@@ -56,7 +55,7 @@ class DataHandler:
 
 
 	def test_print(self):
-		print(self.dataframe['RO Name'].tolist())
+		print(self.ro_dataframe['RO Name'].tolist())
 
 
 	def create_worksheet(self, title): # todo: start writing into new worksheet every start of the month
