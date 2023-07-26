@@ -4,11 +4,12 @@ import datetime
 
 
 class UI:
-	def __init__(self):
+	def __init__(self, title, width, height):
 		self.root = tk.Tk()
-		self.window_size = {"x":800, "y":900}
+		self.window_size = {"x":width, "y":height}
 		self.root.geometry("{}x{}".format(self.window_size["x"], self.window_size["y"]))
-		self.root.title("RO Competency and Proficiency Tracking System")
+		# self.root.config(bg='#856ff8')
+		self.root.title(title)
 		self.root.resizable(False, False)
 
 		self.updated_data = {}
@@ -27,8 +28,7 @@ class UI:
 			"Move by Distance":tk.BooleanVar(),
 			"Set Destination":tk.BooleanVar(),
 			"Accident":tk.StringVar(),
-			"Remark":tk.StringVar(),
-			"Encountered Bug":tk.StringVar()
+			"Remark":tk.StringVar()
 		}
 
 		self.hrs = [f"{number:02d}" for number in range(0,24)]
@@ -41,28 +41,33 @@ class UI:
 		self.x = 0  # initial position
 		self.y = 50 # initial position
 
-		ttk.Label(self.root, text=self.raw_data["Date"], font=("Times New Roman", 17)).place(x = self.window_size["x"] // 2, y = 0)
+		ttk.Label(self.root, text=self.raw_data["Date"], font=("Times New Roman", 17)).place(x=self.window_size["x"] // 2, y=10, anchor="center")
 
 
 	def update_data(self):
 		try:
-			self.raw_data["Start Time"] = self.start_hrs.get() + self.start_mins.get()
-			self.raw_data["End Time"] = self.end_hrs.get() + self.end_mins.get()
+			self.raw_data["Start Time"] = self.start_hrs.get() + ":" + self.start_mins.get()
+			self.raw_data["End Time"] = self.end_hrs.get() + ":" + self.end_mins.get()
+
+			if len(self.raw_data["RO Name"].get()) == 0:
+				raise ValueError('Empty RO name')
+
 
 			for key, value in self.raw_data.items():
 				if key == "Date" or key == "Start Time" or key == "End Time":
 					self.updated_data[key] = [value]
 
 				elif key == "Duration": # save in mins
-					if len(self.raw_data["End Time"]) > 4 or len(self.raw_data["Start Time"]) > 4:
-						raise ValueError
+					if len(self.raw_data["End Time"]) < 4 or len(self.raw_data["Start Time"]) < 4:
+						raise ValueError("Do not leave blank at time input")
+
 					end_time_hrs = int(self.raw_data["End Time"][:2])
 					start_time_hrs = int(self.raw_data["Start Time"][:2])
-					end_time_mins = int(self.raw_data["End Time"][2:])
-					start_time_mins = int(self.raw_data["Start Time"][2:])
-	
+					end_time_mins = int(self.raw_data["End Time"][3:])
+					start_time_mins = int(self.raw_data["Start Time"][3:])
+
 					if (end_time_hrs > 23 or start_time_hrs > 23) or (end_time_mins > 59 or start_time_mins > 59):
-						raise ValueError
+						raise ValueError("Input correct time")
 					
 					else:
 						self.updated_data[key] = [(end_time_hrs * 60 + end_time_mins) - (start_time_hrs * 60 + start_time_mins)]
@@ -70,10 +75,6 @@ class UI:
 				elif key == "Accident":
 					self.updated_data[key] = int(1 if value.get() == "Yes" else 0)
 				
-				elif key == "Encountered Bug":
-					self.updated_data[key] = value.get()
-					if len(self.updated_data[key]) != 0:
-						self.updated_data[key] += " | "
 
 				else:
 					self.updated_data[key] = value.get()
@@ -82,15 +83,16 @@ class UI:
 
 			self.alert_exit_program()
 
-		except (tk.TclError, ValueError, TypeError):
-			self.alert_input_err()
+		except (tk.TclError, ValueError, TypeError) as error:
+			self.alert_input_err(error)
 			return
+		
 
 
-	def alert_input_err(self):
+	def alert_input_err(self, error):
 		pop_up = tk.Tk()
 		pop_up.wm_title("Warning")
-		label = ttk.Label(pop_up, text="Please key in the time in correct format", font=("Times New Roman", 13))
+		label = ttk.Label(pop_up, text=error, font=("Times New Roman", 13))
 		label.pack(side="top", fill="x", pady=10)
 		button = ttk.Button(pop_up, text="close", command = pop_up.destroy)
 		button.pack()
@@ -112,7 +114,7 @@ class UI:
 		self.root.destroy()
 
 
-	def drop_down(self, data_list, data_title, x=0, y=0):
+	def drop_down(self, data_list, data_title, x=0, y=0): # add date
 		if data_title == "Start Time":
 			ttk.Label(self.root, text="hrs",font=("Times New Roman", 13)).place(x=x+200, y=self.y)
 			ttk.Label(self.root, text="mins",font=("Times New Roman", 13)).place(x=x+250, y=self.y)
@@ -144,12 +146,10 @@ class UI:
 
 		else:
 			ttk.Label(self.root, text=data_title, font=("Times New Roman", 13)).place(x=x, y = self.y)
-			drop = ttk.Combobox(self.root, width = 15, textvariable = self.raw_data[data_title], state="readonly")
+			drop = ttk.Combobox(self.root, width = 18, textvariable = self.raw_data[data_title], state="readonly")
 			drop['values'] = data_list
 			drop.place(x = x+100, y = self.y)
 			drop.current()
-
-		self.y += 30
 
 
 	def text_box(self, data_title):
@@ -159,14 +159,14 @@ class UI:
 		# elif data_title == "End Time":
 		# 	input_guide = "Enter end time (enter in 24hr format eg. time now is "+datetime.datetime.now().strftime ('%H%M')+") "
 
-		ttk.Label(self.root, text=data_title+": ",font=("Times New Roman", 13)).place(x=0, y=self.y)
-		self.y += 30
+		ttk.Label(self.root, text=data_title+": ",font=("Times New Roman", 13)).place(x=self.window_size["x"] // 2, y=self.y, anchor="center")
+		self.y += 60
 		entry_box = tk.Entry(self.root, textvariable=self.raw_data[data_title])
-		entry_box.place(x=0, y=self.y,width=380, height=70)
+		entry_box.place(x=self.window_size["x"] // 2, y=self.y, anchor="center",width=380, height=70)
 
 
 	def check_box(self, data_list):
-		ttk.Label(self.root, text ="Select functions that you attempted").place(x = 0,y = self.y)
+		ttk.Label(self.root, text ="Select functions that you attempted",font=("Times New Roman", 13)).place(x = 0,y = self.y)
 		self.y += 30
 
 		for i in data_list:
@@ -175,5 +175,5 @@ class UI:
 
 
 	def submit_button(self):
-		button = tk.Button( self.root , text = "Submit" , command = self.update_data ).place(y=self.y)
+		button = tk.Button( self.root , text = "Submit" , command = self.update_data ).place(x=self.window_size["x"] // 2, y=self.y, anchor="center")
 		self.root.mainloop()
