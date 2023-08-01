@@ -1,6 +1,5 @@
 import datetime
 import customtkinter
-import tkinter
 from tkcalendar import Calendar
 
 class UI:
@@ -52,10 +51,6 @@ class UI:
 			self.raw_data["Start Time"] = self.start_hrs.get() + ":" + self.start_mins.get()
 			self.raw_data["End Time"] = self.end_hrs.get() + ":" + self.end_mins.get()
 
-			if len(self.raw_data["RO Name"].get()) == 0:
-				raise ValueError('Empty RO name')
-
-
 			for key, value in self.raw_data.items():
 				if key == "Date" or key == "Start Time" or key == "End Time" or key == "Day":
 					self.updated_data[key] = [value]
@@ -75,11 +70,15 @@ class UI:
 					
 				elif key == "Accident":
 					self.updated_data[key] = [int(1 if value.get() == "Yes" else 0)]
-									
+
 				else:
 					self.updated_data[key] = value.get()
 					if(type(self.updated_data[key]) == bool):
 						self.updated_data[key] = [int(self.updated_data[key])]
+	
+					else:
+						if len(self.updated_data[key]) == 0 and key != "Remark":
+							raise ValueError("Empty {}".format(key))
 
 			self.alert_exit_program()
 
