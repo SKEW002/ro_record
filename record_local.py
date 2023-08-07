@@ -39,7 +39,7 @@ if __name__ == "__main__":
             interface.y += 60
             interface.submit_button()
             ro_data = DataHandler()
-            ro_data.update_online_version(function="ro_record", updated_data=interface.updated_data)
+            ro_data.update_online(function="ro_record", updated_data=interface.updated_data)
         else:
             print("No internet connection")
 
