@@ -18,6 +18,7 @@ class UI:
 			"RO Name":customtkinter.StringVar(),
 			"Category":customtkinter.StringVar(),
 			"Mentor": customtkinter.StringVar(),
+			"Version": customtkinter.StringVar(),
 			"Date": datetime.datetime.now().strftime("%d/%m/%Y"),
 			"Start Time": None,
 			"End Time": None,
@@ -29,6 +30,8 @@ class UI:
 			"Move by Distance":customtkinter.BooleanVar(),
 			"Set Destination":customtkinter.BooleanVar(),
 			"Accident":customtkinter.StringVar(),
+			"Disciplinary Issue or Safety Breach":customtkinter.StringVar(),
+			"Jotform Link": customtkinter.StringVar(),
 			"Remark":customtkinter.StringVar(),
 			"Day": datetime.datetime.now().strftime("%d")
 		}
@@ -68,7 +71,7 @@ class UI:
 						self.updated_data[key] += (24 * 60)
 					self.updated_data[key] = [self.updated_data[key]]
 					
-				elif key == "Accident":
+				elif key == "Accident" or key == "Disciplinary Issue or Safety Breach":
 					self.updated_data[key] = [int(1 if value.get() == "Yes" else 0)]
 
 				else:
@@ -77,9 +80,9 @@ class UI:
 						self.updated_data[key] = [int(self.updated_data[key])]
 	
 					else:
-						if len(self.updated_data[key]) == 0 and key != "Remark":
+						if len(self.updated_data[key]) == 0 and key != "Remark" and key != "Jotform Link":
 							raise ValueError("Empty {}".format(key))
-
+			print(self.updated_data)
 			self.alert_exit_program()
 
 		except (ValueError, TypeError) as error:
@@ -138,21 +141,21 @@ class UI:
 		else:
 			customtkinter.CTkLabel(self.root, text=data_title, font=customtkinter.CTkFont(size=15)).place(x=self.x, y = self.y)
 			drop = customtkinter.CTkComboBox(master=self.root, width = 180, variable = self.raw_data[data_title], values=data_list, state="readonly",hover=True)
-			drop.place(x=self.x+100, y=self.y)
+			drop.place(x=self.x+100+x, y=self.y)
 
 
 
-	def text_box(self, data_title):
-		# if data_title == "Start Time":
-		# 	input_guide = "Enter start time (enter in 24hr format eg. time now is "+datetime.datetime.now().strftime ('%H%M')+") "
-
-		# elif data_title == "End Time":
-		# 	input_guide = "Enter end time (enter in 24hr format eg. time now is "+datetime.datetime.now().strftime ('%H%M')+") "
-
+	def text_box_vertical(self, data_title):
 		customtkinter.CTkLabel(self.root, text=data_title+": ",font=customtkinter.CTkFont(size=20)).place(x=self.window_size["x"] // 2, y=self.y, anchor="center")
 		self.y += 60
 		entry_box = customtkinter.CTkEntry(self.root, textvariable=self.raw_data[data_title],width=380, height=70)
 		entry_box.place(x=self.window_size["x"] // 2, y=self.y, anchor="center")
+
+
+	def text_box_horizontal(self, data_title):
+		customtkinter.CTkLabel(self.root, text=data_title+": ",font=customtkinter.CTkFont(size=15)).place(x=self.x, y=self.y)
+		entry_box = customtkinter.CTkEntry(self.root, textvariable=self.raw_data[data_title])
+		entry_box.place(x=self.x+100, y=self.y)
 
 
 	def check_box(self, data_list):
@@ -167,7 +170,6 @@ class UI:
 	def submit_button(self):
 		button = customtkinter.CTkButton(self.root , text="Submit", command=self.update_data).place(x=self.window_size["x"] // 2, y=self.y, anchor="center")
 		self.root.mainloop()
-
 
 
 # start date title
@@ -189,10 +191,16 @@ class UI:
 
 		self.y += 120
 		# # date confirm button
-		self.confirm_date = customtkinter.CTkButton(self.root, text="Confirm Dates",  hover=True, command=self.test_cal)
+		self.confirm_date = customtkinter.CTkButton(self.root, text="Confirm Dates",  hover=True, command=self.store_date)
 		self.confirm_date.place(x=self.window_size["x"]//2, y=self.y, anchor="center")
 		print(self.start_cal.get_date)
 		self.proceed_overall_graph = customtkinter.CTkButton(self.root)
+		self.root.mainloop()
 
-	def test_cal(self):
+
+	def store_date(self):
+		self.raw_data["RO Name"] = self.raw_data["RO Name"].get()
+		print(self.raw_data["RO Name"])
 		print(self.start_cal.get_date(), self.end_cal.get_date())
+
+		self.alert_exit_program()
