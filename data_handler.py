@@ -1,8 +1,6 @@
 import gspread
 import pandas as pd
 import datetime
-import matplotlib.pyplot as plt
-
 
 class DataHandler:
 	def __init__(self):
@@ -15,6 +13,9 @@ class DataHandler:
 	def dataframe_tolist(self, dataframe):
 		return [dataframe.columns.tolist()] + dataframe.values.tolist()
 
+	def load_history(self):
+		history_data = self.__sh.worksheet("History")
+		return pd.DataFrame(history_data.get_all_records())
 
 	def update_online_month(self,function, updated_data): # updated data in dict
 		if function == "ro_record":
@@ -33,7 +34,7 @@ class DataHandler:
 			history_dataframe = pd.concat([history_dataframe, updated_dataframe])
 			history_data.update("A1", self.dataframe_tolist(history_dataframe))
 
-			compiled_data = self.__sh.worksheet("Test Compiled Data")
+			compiled_data = self.__sh.worksheet("All Compiled Data")
 			compiled_dataframe = pd.DataFrame(compiled_data.get_all_records())
 			compiled_dataframe_columns = list(compiled_dataframe.columns)
 			if compiled_dataframe.empty:
@@ -130,27 +131,35 @@ class DataHandler:
 
 			history_data.update("A1", self.dataframe_tolist(history_dataframe))
 
+	def update_online_history(self,function, updated_data):
+		if function == "ro_record":
+			title = "History"
+			history_data = self.__sh.worksheet(title)
 
+			history_dataframe = pd.DataFrame(history_data.get_all_records())
+			updated_dataframe = pd.DataFrame.from_dict(updated_data)
+
+			history_dataframe = pd.concat([history_dataframe, updated_dataframe])
+			history_data.update("A1", self.dataframe_tolist(history_dataframe))
+
+		elif function == "bug_ticket":
+			try:
+				bug_data = self.__sh.worksheet(title)
+			except gspread.exceptions.WorksheetNotFound:
+				self.create_worksheet(title)
+				bug_data = self.__sh.worksheet(title)
+
+			history_data.update("A1", self.dataframe_tolist(history_dataframe))
 
 	def show_data(self, ro_data):
-		compiled_data = self.__sh.worksheet("0823_History")
+		title = "0823_History"
+		#title = ro_data["Version"].get() + "_History"
+		compiled_data = self.__sh.worksheet(title)
 		compiled_dataframe = pd.DataFrame(compiled_data.get_all_records())
 		index = compiled_dataframe.loc[compiled_dataframe["RO Name"] == ro_data["RO Name"]].index[0]
 		print(compiled_dataframe.loc[compiled_dataframe["RO Name"] == ro_data["RO Name"]])
 
 		table_data = compiled_dataframe.loc[compiled_dataframe["RO Name"] == ro_data["RO Name"]].drop(columns="RO Name")
-
-		fig = plt.figure()
-		ax = fig.subplots()
-
-		ax.text(0, 0.05, ro_data["RO Name"], style='italic', bbox={'facecolor': 'green', 'alpha': 0.5, 'pad': 10})
-
-		ax.axis('off')
-		ax.axis('tight')
-		table = ax.table(cellText=table_data.values, colLabels=table_data.columns, loc='center')
-		table.auto_set_font_size(False)
-		table.set_fontsize(8)
-		plt.show()
 
 		print(compiled_dataframe.at[index, "Duration"])
 
