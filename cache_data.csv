@@ -2,13 +2,14 @@ RO Name,Category,Mentor,Functions,Accident,Version,Disciplinary Issue or Safety 
 Teo Sok Fan,PSA Trainee,Wang Jue (Jay),Move Slowly,Yes,5.19.19,Yes
 Jong Ting Yew (Daniel),Venti Trainee,Shafiq Hamid,Path Selection,No,5.19.20,No
 Chew Lee Lee,PSA OJT,Hilman Hanif,Re-Localization,,5.24.3,
-Ngo Keh Hook,Venti OJT,Kew Shen Yu,Traffic Light Override,,,
+Ngo Keh Hook,Venti OJT,Kew Shen Yu,Traffic Light Override,,5.24.4,
 Mohamed Shahril,PSA RO,Aneez Jaheez,Move by Distance,,,
 Saiful Bin Jaafar,Venti RO,Denis Seow,Set Destination,,,
-Muhammad Hidayat,,NA,,,,
+Muhammad Hidayat,,N/A,Go Ahead,,,
 Muhammad Hairi,,,,,,
 Lung Shu Mien,,,,,,
 Muhammad Shahrun Hamdan,,,,,,
+Tai Kim Soon,,,,,,
 Wang Jue (Jay),,,,,,
 Shafiq Hamid,,,,,,
 Hilman Hanif,,,,,,

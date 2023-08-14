@@ -29,11 +29,11 @@ class UI:
 			"Traffic Light Override":customtkinter.BooleanVar(),
 			"Move by Distance":customtkinter.BooleanVar(),
 			"Set Destination":customtkinter.BooleanVar(),
+			"Go Ahead":customtkinter.BooleanVar(),
 			"Accident":customtkinter.StringVar(),
 			"Disciplinary Issue or Safety Breach":customtkinter.StringVar(),
 			"Jotform Link": customtkinter.StringVar(),
-			"Remark":customtkinter.StringVar(),
-			"Day": datetime.datetime.now().strftime("%d")
+			"Remark":customtkinter.StringVar()
 		}
 
 		self.hrs = [f"{number:02d}" for number in range(0,24)]
@@ -55,7 +55,7 @@ class UI:
 			self.raw_data["End Time"] = self.end_hrs.get() + ":" + self.end_mins.get()
 
 			for key, value in self.raw_data.items():
-				if key == "Date" or key == "Start Time" or key == "End Time" or key == "Day":
+				if key == "Date" or key == "Start Time" or key == "End Time":
 					self.updated_data[key] = [value]
 
 				elif key == "Duration": # save in mins
