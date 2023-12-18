@@ -5,3 +5,4 @@ __pycache__/
 *ipynb*
 .coverage
 *.csv
+secret_file/

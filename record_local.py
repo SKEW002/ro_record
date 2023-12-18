@@ -9,7 +9,7 @@ def update_local_data(csv_path):
     ro_data.ro_dataframe.to_csv(csv_path, index=False)
 
 if __name__ == "__main__":
-    csv_path = "cache_data.csv"
+    csv_path = "secret_file/cache_data.csv"
     try:
         if(requests.get('https://google.com/')):
             ro_dataframe = pd.read_csv(csv_path)

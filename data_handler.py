@@ -4,7 +4,7 @@ import datetime
 
 class DataHandler:
 	def __init__(self):
-		self.__sa = gspread.service_account(filename="rorecord-a80647abebdc.json")
+		self.__sa = gspread.service_account(filename="secret_file/rorecord-a80647abebdc.json")
 		self.__sh = self.__sa.open("RO Record")
 		self.__ro_data = self.__sh.worksheet("RO Data")
 		self.ro_dataframe = pd.DataFrame(self.__ro_data.get_all_records())
