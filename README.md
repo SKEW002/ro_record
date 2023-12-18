@@ -25,6 +25,9 @@ Develop a RO Competency and Proficiency Tracking System that enables the efficie
 8. Accident: Drop-down list, Only allow to select one (1. Yes, 2. No)
 9. Remark: Big text box, allow user to key in any comment and observations
 
+
+Start UI by running `python3 record_local.py`
+
 ![image](https://github.com/SKEW002/ro_record/assets/57441569/62ac89ee-c8aa-4be3-88ea-b772369c0ad7)
 
 Clicking submit button will upload the data accordingly to Google Sheet
