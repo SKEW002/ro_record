@@ -24,3 +24,6 @@ Develop a RO Competency and Proficiency Tracking System that enables the efficie
 7. Duration: Automatically filled in, Duration = End Time - Start Time
 8. Accident: Drop-down list, Only allow to select one (1. Yes, 2. No)
 9. Remark: Big text box, allow user to key in any comment and observations
+
+## Information Submitted via JotForm
+![image](https://github.com/SKEW002/ro_record/assets/57441569/0f335622-3b36-4042-b11d-18fd5efe7d5a)
