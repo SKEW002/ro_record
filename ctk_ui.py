@@ -32,7 +32,6 @@ class UI:
 			"Go Ahead":customtkinter.BooleanVar(),
 			"Accident":customtkinter.StringVar(),
 			"Disciplinary Issue or Safety Breach":customtkinter.StringVar(),
-			"Jotform Link": customtkinter.StringVar(),
 			"Remark":customtkinter.StringVar()
 		}
 
@@ -80,7 +79,7 @@ class UI:
 						self.updated_data[key] = [int(self.updated_data[key])]
 	
 					else:
-						if len(self.updated_data[key]) == 0 and key != "Remark" and key != "Jotform Link":
+						if len(self.updated_data[key]) == 0 and key != "Remark":
 							raise ValueError("Empty {}".format(key))
 			print(self.updated_data)
 			self.alert_exit_program()

@@ -32,14 +32,12 @@ if __name__ == "__main__":
             interface.drop_down(ro_dataframe["Accident"].dropna(), "Accident")
             interface.y += 50
             interface.drop_down(ro_dataframe["Disciplinary Issue or Safety Breach"].dropna(), "Disciplinary Issue or Safety Breach", x=150)
-            interface.y += 50
-            interface.text_box_horizontal("Jotform Link")
             interface.y += 70
             interface.text_box_vertical("Remark")
             interface.y += 60
             interface.submit_button()
             ro_data = DataHandler()
-            ro_data.update_online_history(function="ro_record", updated_data=interface.updated_data)
+            ro_data.update_online_month(updated_data=interface.updated_data)
         else:
             print("No internet connection")
 
